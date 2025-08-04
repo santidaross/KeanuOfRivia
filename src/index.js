@@ -3,23 +3,58 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
 
+    // Headers de seguridad y optimización
+    const securityHeaders = {
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY',
+      'X-XSS-Protection': '1; mode=block',
+      'Referrer-Policy': 'strict-origin-when-cross-origin',
+      'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+      'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.mcstatus.io;",
+      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+      'Cache-Control': 'public, max-age=3600'
+    };
+
     // Manejar rutas de API
     if (path.startsWith('/api/')) {
-      return handleAPI(request, env, ctx);
+      const response = await handleAPI(request, env, ctx);
+      // Agregar headers de seguridad a respuestas de API
+      Object.entries(securityHeaders).forEach(([key, value]) => {
+        response.headers.set(key, value);
+      });
+      return response;
     }
 
     // Servir archivos estáticos
     if (env.ASSETS) {
-      return env.ASSETS.fetch(request);
+      const response = await env.ASSETS.fetch(request);
+      
+      // Agregar headers de seguridad
+      Object.entries(securityHeaders).forEach(([key, value]) => {
+        response.headers.set(key, value);
+      });
+
+      // Headers específicos por tipo de archivo
+      if (path.endsWith('.css')) {
+        response.headers.set('Content-Type', 'text/css');
+        response.headers.set('Cache-Control', 'public, max-age=31536000');
+      } else if (path.endsWith('.js')) {
+        response.headers.set('Content-Type', 'application/javascript');
+        response.headers.set('Cache-Control', 'public, max-age=31536000');
+      } else if (path.match(/\.(png|jpg|jpeg|gif|svg|ico|woff2?)$/)) {
+        response.headers.set('Cache-Control', 'public, max-age=31536000');
+      }
+
+      return response;
     } else {
-      // En desarrollo local sin assets binding, devolver mensaje informativo
       return new Response(
         `Development mode: Static files not available. Use 'wrangler dev --assets' or deploy to test static files.`,
         { 
           status: 200,
           headers: { 
             'Content-Type': 'text/plain',
-            'Access-Control-Allow-Origin': '*'
+            'Access-Control-Allow-Origin': '*',
+            ...securityHeaders
           }
         }
       );
@@ -32,7 +67,7 @@ async function handleAPI(request, env, ctx) {
   const path = url.pathname;
 
   // API para estado de Minecraft
-  if (path === '/api/minecraft-status') {
+  if (path === '/api/mc/status') {
     return handleMinecraftStatus(request, env, ctx);
   }
 
@@ -42,7 +77,7 @@ async function handleAPI(request, env, ctx) {
   }
 
   // API para obtener información del servidor (sin revelar IP)
-  if (path === '/api/server-info') {
+  if (path === '/api/mc/server-info') {
     return handleServerInfo(request, env, ctx);
   }
 

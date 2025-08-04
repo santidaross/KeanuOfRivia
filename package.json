@@ -8,7 +8,17 @@
     "dev:api": "wrangler dev",
     "deploy": "wrangler deploy",
     "deploy:staging": "wrangler deploy --env staging",
-    "tail": "wrangler tail"
+    "deploy:prod": "wrangler deploy --env production",
+    "tail": "wrangler tail",
+    "postpush": "npm run deploy",
+    "test:performance": "lighthouse https://keanuofrivia-website.santidaross.workers.dev --output=json --output-path=./lighthouse-report.json",
+    "test:security": "npm run test:headers && npm run test:ssl",
+    "test:headers": "curl -I https://keanuofrivia-website.santidaross.workers.dev",
+    "test:ssl": "npx ssl-checker keanuofrivia-website.santidaross.workers.dev",
+    "test:load": "npx autocannon -c 10 -d 30 https://keanuofrivia-website.santidaross.workers.dev",
+    "test:api": "npm run test:minecraft-api && npm run test:site-config-api",
+    "test:minecraft-api": "curl -s https://keanuofrivia-website.santidaross.workers.dev/api/minecraft-status | jq .",
+    "test:site-config-api": "curl -s https://keanuofrivia-website.santidaross.workers.dev/api/site-config | jq ."
   },
   "keywords": [
     "cloudflare-workers",
@@ -28,7 +38,10 @@
   },
   "homepage": "https://keanuofrivia.com",
   "devDependencies": {
-    "wrangler": "^4.27.0"
+    "wrangler": "^4.27.0",
+    "lighthouse": "^11.6.0",
+    "autocannon": "^7.15.0",
+    "ssl-checker": "^2.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
