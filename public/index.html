@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<!--
+  To change the theme, change the class on the html tag below to one of:
+  - theme-auto: Automatically switches based on user's system preferences
+  - theme-light: Forces light theme
+  - theme-dark: Forces dark theme
+-->
+
+<html class="theme-auto" lang="en"> <!-- Update`class="theme-auto" with your preference -->
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Page Title - Change this to your name/brand (50-60 characters recommended) -->
+    <title>Keanu Of Rivia</title>
+    <link rel="icon" type="image/png" href="/images/favicon.png"> <!-- Update this with your own favicon -->
+
+    <!-- Meta Description - Write a description (150-160 characters recommended) -->
+    <meta name="description" content="Keanu Of Rivia website">
+
+    <!-- Keywords -->
+    <meta name="keywords" content="your name, industry, and specialties">
+
+    <!-- Canonical URL - Helps prevent duplicate content issues -->
+    <meta rel="canonical" href="https://keanuofrivia.com">
+
+    <!-- Author Information -->
+    <meta name="author" content="Keanu Of Rivia">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/brands.css">
+
+    <style>
+      .theme-toggle {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        background: #f0f0f0;
+        border: 2px solid #ccc;
+        border-radius: 25px;
+        width: 4rem;
+        height: 2rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+        z-index: 1000;
+        box-sizing: border-box;
+        overflow: visible;
+      }
+      
+      .theme-toggle::before {
+        content: '';
+        position: absolute;
+        left: 0.25rem;
+        width: 1.5rem;
+        height: 1.5rem;
+        background: #fff;
+        border-radius: 50%;
+        transition: transform 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .theme-toggle:hover {
+        transform: scale(1.05);
+      }
+      
+      .theme-auto .theme-toggle {
+        border-color: #666;
+        background: #e0e0e0;
+      }
+      
+      .theme-dark .theme-toggle {
+        border-color: #fff;
+        background: #333;
+      }
+      
+      .theme-dark .theme-toggle::before {
+        transform: translateX(2rem);
+      }
+      
+      .theme-light .theme-toggle {
+        border-color: #333;
+        background: #fff;
+      }
+      
+      .theme-light .theme-toggle::before {
+        transform: translateX(2rem);
+      }
+      
+      .theme-dark .theme-toggle::before {
+        background: #333;
+      }
+      
+      .theme-light .theme-toggle::before {
+        background: #fff;
+      }
+    </style>
+
+    <script>
+      // Configuración del sitio cargada desde el servidor
+      let siteConfig = null;
+
+      // Función para cargar configuración del sitio
+      async function loadSiteConfig() {
+        try {
+          const response = await fetch('/api/site-config');
+          siteConfig = await response.json();
+          updatePageContent();
+        } catch (error) {
+          console.error('Error loading site config:', error);
+        }
+      }
+
+      // Función para actualizar contenido de la página
+      function updatePageContent() {
+        if (!siteConfig) return;
+
+        // Actualizar título
+        document.title = siteConfig.title;
+        
+        // Actualizar meta description
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) {
+          metaDesc.content = siteConfig.description;
+        }
+
+        // Actualizar enlaces dinámicamente
+        updateLinks();
+      }
+
+      // Función para actualizar enlaces
+      function updateLinks() {
+        if (!siteConfig?.links) return;
+
+        const buttonStack = document.querySelector('.button-stack');
+        if (!buttonStack) return;
+
+        // Limpiar enlaces existentes
+        buttonStack.innerHTML = '';
+
+        // Crear nuevos enlaces
+        siteConfig.links.forEach(link => {
+          const button = document.createElement('button');
+          button.className = `button button-${link.type}`;
+          button.onclick = () => window.open(link.url, '_blank');
+          button.type = 'button';
+          
+          if (link.type === 'minecraft') {
+            button.style = 'flex-direction: column; align-items: center;';
+            button.id = 'mc-status';
+            
+            button.innerHTML = `
+              <div style="display: flex; align-items: center; justify-content: center; width: 100%;">
+                <img class="icon" aria-hidden="true" src="${link.icon}" alt="${link.name} Logo">${link.name}
+              </div>
+              <small style="font-size: 0.8em; opacity: 0.8; margin-top: 0.25rem; text-align: center;">Retrieving status...</small>
+            `;
+          } else {
+            button.innerHTML = `<img class="icon" aria-hidden="true" src="${link.icon}" alt="${link.name} Logo">${link.name}`;
+          }
+          
+          buttonStack.appendChild(button);
+        });
+      }
+
+      // Función para verificar el estado del servidor de Minecraft usando API del servidor
+      async function checkMinecraftStatus() {
+        try {
+          const response = await fetch('/api/minecraft-status');
+          const data = await response.json();
+          updateStatusDisplay(data);
+        } catch (error) {
+          console.error('Error checking Minecraft status:', error);
+          const statusElement = document.getElementById("mc-status");
+          if (statusElement) {
+            const statusText = statusElement.querySelector("small");
+            if (statusText) {
+              statusText.innerHTML = `<span style="text-shadow: 1px 1px 1px rgba(0,0,0,0.8);">🔴</span> Offline`;
+            }
+          }
+        }
+      }
+
+      function updateStatusDisplay(data) {
+        const online = data.online;
+        const players = data.players?.online || 0;
+        const statusElement = document.getElementById("mc-status");
+        if (!statusElement) return;
+        
+        const statusText = statusElement.querySelector("small");
+        if (!statusText) return;
+        
+        if (online) {
+          statusText.innerHTML = `<span style="text-shadow: 1px 1px 1px rgba(0,0,0,0.8);">🟢</span> Online (${players} players)`;
+        } else {
+          statusText.innerHTML = `<span style="text-shadow: 1px 1px 1px rgba(0,0,0,0.8);">🔴</span> Offline`;
+        }
+      }
+
+      // Theme Toggle Functionality
+      function initThemeToggle() {
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        
+        // Get saved theme from localStorage or default to auto
+        const savedTheme = localStorage.getItem('theme') || 'theme-auto';
+        html.className = savedTheme;
+        
+        // Update toggle button icon
+        updateToggleIcon(savedTheme);
+        
+        // Toggle theme function
+        function toggleTheme() {
+          const currentTheme = html.className;
+          let newTheme;
+          
+          if (currentTheme === 'theme-auto') {
+            newTheme = 'theme-dark';
+          } else if (currentTheme === 'theme-dark') {
+            newTheme = 'theme-light';
+          } else {
+            newTheme = 'theme-auto';
+          }
+          
+          // Apply new theme
+          html.className = newTheme;
+          localStorage.setItem('theme', newTheme);
+          
+          // Force update the icon
+          setTimeout(() => {
+            updateToggleIcon(newTheme);
+          }, 10);
+        }
+        
+        function updateToggleIcon(theme) {
+          if (themeToggle) {
+            const span = themeToggle.querySelector('span');
+            if (span) {
+              let icon;
+              if (theme === 'theme-dark') {
+                icon = '☀️'; // Sol para modo oscuro
+              } else if (theme === 'theme-light') {
+                icon = '🌙'; // Luna para modo claro
+              } else {
+                icon = '⚙️'; // Engranaje para modo auto
+              }
+              span.textContent = icon;
+              console.log('Theme updated to:', theme, 'Icon:', icon);
+            }
+          }
+        }
+        
+        // Add click event listener
+        if (themeToggle) {
+          themeToggle.addEventListener('click', toggleTheme);
+        }
+      }
+
+      // Initialize everything when DOM is loaded
+      document.addEventListener('DOMContentLoaded', async function() {
+        // Cargar configuración del sitio
+        await loadSiteConfig();
+        
+        // Inicializar tema
+        initThemeToggle();
+        
+        // Verificar estado de Minecraft después de cargar configuración
+        setTimeout(() => {
+          checkMinecraftStatus();
+          // Verificar cada 2 minutos
+          setInterval(checkMinecraftStatus, 120000);
+        }, 1000);
+      });
+    </script>
+  </head>
+
+<body>
+
+    <!-- Theme Toggle Button -->
+    <!-- <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+      <span>⚙️</span>
+    </button> -->
+
+    <div class="container">
+        <div class="column">
+
+            <!--
+              By default, the Avatar is rounded. Use the following:
+              - avatar--rounded: Automatically rounds the image
+              - avatar--soft: Slightly rounds the image
+              - avatar--none: Removes any rounding
+
+              Be sure to replace the src with your own image path and update the alt text
+            -->
+            <img class="avatar avatar--soft" src="images/avatar.png" srcset="images/avatar.png 2x" alt="Keanu Of Rivia">
+
+            <!-- Replace with your name or brand -->
+            <h1>
+              <div>Keanu Of Rivia</div>
+            </h1>
+
+            <br>
+            <p></p>
+
+            <!-- All your buttons go here -->
+            <div class="button-stack" role="navigation">
+              <!-- Los enlaces se cargarán dinámicamente desde el servidor -->
+            </div>
+
+      <!-- Feel free to add your own footer information, including updating `privacy.html` to reflect how your LittleLink fork is set up -->
+      <footer>
+        Created by <b>Keanu Of Rivia</b>
+      </footer>
+
+    </div>
+  </div>
+
+</body>
+
+</html>
+

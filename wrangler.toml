@@ -1,0 +1,20 @@
+name = "keanuofrivia-website"
+compatibility_date = "2025-08-04"
+main = "src/index.js"
+
+[assets]
+directory = "./public"
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = "2ebaee02ce85498d9a8d2d0fd0388b4d"
+preview_id = "b155ed0fddb943218f75bf6189cfe7ab"
+
+[env.production]
+name = "keanuofrivia-website"
+
+[env.staging]
+name = "keanuofrivia-website-staging"
+
+[env.local]
+name = "keanuofrivia-website-local"

@@ -1,0 +1,36 @@
+{
+  "name": "keanuofrivia-website",
+  "version": "1.0.0",
+  "description": "Sitio web personal de Keanu Of Rivia construido con Cloudflare Workers",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev --assets ./public",
+    "dev:api": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "tail": "wrangler tail"
+  },
+  "keywords": [
+    "cloudflare-workers",
+    "personal-website",
+    "minecraft",
+    "serverless",
+    "edge-computing"
+  ],
+  "author": "Keanu Of Rivia",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tu-usuario/keanuofrivia-website.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tu-usuario/keanuofrivia-website/issues"
+  },
+  "homepage": "https://keanuofrivia.com",
+  "devDependencies": {
+    "wrangler": "^4.27.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
