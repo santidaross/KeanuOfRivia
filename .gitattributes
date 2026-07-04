@@ -1,0 +1,19 @@
+# Normalización de fin de línea. Los scripts DEBEN ser LF (si no, bash falla con \r).
+* text=auto
+
+*.sh   text eol=lf
+*.mjs  text eol=lf
+*.js   text eol=lf
+*.json text eol=lf
+*.yml  text eol=lf
+*.md   text eol=lf
+*.toml text eol=lf
+
+# Binarios (que git no toque los fin de línea)
+*.png  binary
+*.woff binary
+*.woff2 binary
+*.ttf  binary
+*.eot  binary
+*.svg  text eol=lf
+*.ico  binary

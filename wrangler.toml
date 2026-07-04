@@ -1,0 +1,50 @@
+name = "keanuofrivia-website"
+main = "src/index.js"
+compatibility_date = "2025-08-04"
+
+# IMPORTANTE — SECRETOS:
+# ADMIN_API_KEY NO va acá. Es un secreto y se gestiona con Wrangler secrets:
+#   wrangler secret put ADMIN_API_KEY --env staging
+#   wrangler secret put ADMIN_API_KEY --env production
+# En desarrollo local va en `.dev.vars` (gitignoreado):  ADMIN_API_KEY=una-key-de-dev
+# Nunca poner una key real en `[vars]`.
+
+# --- Config por defecto (wrangler dev / wrangler deploy sin --env) ---
+[assets]
+directory = "./public"
+
+[vars]
+NODE_ENV = "development"
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = "2ebaee02ce85498d9a8d2d0fd0388b4d"
+preview_id = "b155ed0fddb943218f75bf6189cfe7ab"
+
+[dev]
+ip = "localhost"
+port = 8787
+local_protocol = "http"
+
+# --- Producción (wrangler deploy --env production) ---
+# Los entornos con nombre NO heredan bindings top-level: se redeclaran acá.
+[env.production]
+name = "keanuofrivia-website"
+assets = { directory = "./public" }
+vars = { NODE_ENV = "production" }
+
+[[env.production.kv_namespaces]]
+binding = "CACHE"
+id = "2ebaee02ce85498d9a8d2d0fd0388b4d"
+preview_id = "b155ed0fddb943218f75bf6189cfe7ab"
+
+# --- Staging (wrangler deploy --env staging) ---
+[env.staging]
+name = "keanuofrivia-website-staging"
+assets = { directory = "./public" }
+vars = { NODE_ENV = "staging" }
+
+[[env.staging.kv_namespaces]]
+binding = "CACHE"
+id = "2ebaee02ce85498d9a8d2d0fd0388b4d"
+preview_id = "b155ed0fddb943218f75bf6189cfe7ab"

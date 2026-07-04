@@ -1,0 +1,26 @@
+# Git hooks del repo, gestionados por lefthook.
+# Se instalan solos al correr `npm install` (script "prepare" → `lefthook install`).
+# Emergencia (evitar — CI igual valida): git commit --no-verify
+#
+# Decisiones:
+# - commit-msg: valida Conventional Commits y BLOQUEA atribución de IA (regla dura del proyecto).
+# - pre-commit: solo gates rápidos y locales. Anti-slop de UI y el índice de specs autogenerado.
+#   El Worker es JS puro (no hay build ni typecheck); es un Worker único, sin turbo/monorepo.
+
+commit-msg:
+  commands:
+    conventional-and-no-ai:
+      run: node scripts/check-commit-msg.mjs {1}
+
+pre-commit:
+  parallel: true
+  commands:
+    slop:
+      # Detector anti-slop de impeccable sobre los archivos de UI staged (.tsx/.jsx/.css).
+      # Baseline limpio → falla ante cualquier finding. Falso positivo puntual: git commit --no-verify.
+      glob: "*.{tsx,jsx,css}"
+      run: node scripts/check-slop.mjs {staged_files}
+    specs-index:
+      # Sin glob: corre siempre (es instantáneo). Regenera specs/README.md (índice derivado de las
+      # carpetas de specs/) y lo re-stagea. NO bloquea: se auto-mantiene en cada commit.
+      run: node scripts/gen-specs-index.mjs --fix && git add specs/README.md

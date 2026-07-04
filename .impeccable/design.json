@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-04T00:00:00.000Z",
+  "title": "Design System: KeanuOfRivia Website",
+  "extensions": {
+    "colorMeta": {
+      "brand-blue": {
+        "role": "primary",
+        "displayName": "Azul",
+        "canonical": "#3b82f6",
+        "darkValue": "#60a5fa"
+      },
+      "brand-violet": {
+        "role": "secondary",
+        "displayName": "Violeta",
+        "canonical": "#8b5cf6",
+        "darkValue": "#a78bfa"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Texto",
+        "canonical": "#1a202c",
+        "darkValue": "#f7fafc"
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Texto secundario",
+        "canonical": "#4a5568",
+        "darkValue": "#e2e8f0"
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Fondo",
+        "canonical": "#ffffff",
+        "darkValue": "#1a202c"
+      },
+      "surface-2": {
+        "role": "neutral",
+        "displayName": "Fondo tarjeta",
+        "canonical": "#f8fafc",
+        "darkValue": "#2d3748"
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Borde",
+        "canonical": "#e2e8f0",
+        "darkValue": "#4a5568"
+      },
+      "online": { "role": "tertiary", "displayName": "Online", "canonical": "#10b981" },
+      "offline": { "role": "tertiary", "displayName": "Offline", "canonical": "#ef4444" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Título principal (h1, 2.5rem/700)." },
+      "body": { "displayName": "Body", "purpose": "Descripción y texto corrido (1.125rem)." },
+      "label": { "displayName": "Label", "purpose": "Texto de botones de enlace y estados (0.875rem)." }
+    },
+    "shadows": [
+      { "name": "hover", "value": "0 8px 25px var(--shadow)", "purpose": "Elevación de los botones de enlace en hover." }
+    ]
+  }
+}

@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Sin secretos: corre en PRs de forks de forma segura. Es el gate de calidad.
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Commit message lint (conventional + no AI attribution)
+        if: github.event_name == 'pull_request'
+        run: |
+          # Valida el subject del último commit del PR
+          git log -1 --format=%B > /tmp/msg.txt
+          node scripts/check-commit-msg.mjs /tmp/msg.txt
+
+      - name: Anti-slop (UI)
+        run: node scripts/check-slop.mjs --all
+
+      - name: Specs index up to date
+        run: node scripts/gen-specs-index.mjs
+
+      - name: Tests
+        run: npm run test

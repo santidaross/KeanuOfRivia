@@ -1,0 +1,28 @@
+{
+  "title": "Keanu Of Rivia",
+  "description": "Keanu Of Rivia website",
+  "links": [
+    {
+      "name": "Minecraft Server",
+      "url": "https://mc.keanuofrivia.com",
+      "icon": "/images/icons/minecraft.svg",
+      "type": "minecraft"
+    },
+    {
+      "name": "Buy Me A Coffee",
+      "url": "https://buymeacoffee.com/keanuofrivia",
+      "icon": "/images/icons/buy-me-a-coffee.svg",
+      "type": "coffee"
+    },
+    {
+      "name": "Steam",
+      "url": "https://steamcommunity.com/profiles/76561197993066934",
+      "icon": "/images/icons/steam.svg",
+      "type": "steam"
+    }
+  ],
+  "theme": {
+    "default": "auto",
+    "options": ["auto", "light", "dark"]
+  }
+} 

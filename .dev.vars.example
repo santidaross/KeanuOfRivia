@@ -1,0 +1,6 @@
+# Secretos LOCALES para `wrangler dev` (copiá a `.dev.vars`, que está gitignoreado).
+# NUNCA pongas la key real acá ni en wrangler.toml. En staging/prod se setea con:
+#   wrangler secret put ADMIN_API_KEY --env staging
+#   wrangler secret put ADMIN_API_KEY --env production
+
+ADMIN_API_KEY=una-key-de-desarrollo

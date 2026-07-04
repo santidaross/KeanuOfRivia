@@ -1,0 +1,28 @@
+name: 🐛 Bug
+description: Reportar un problema en el sitio o la API
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: Qué pasa
+      description: Descripción del bug y qué esperabas que pasara.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Cómo reproducirlo
+      description: Pasos, URL/endpoint, request (sin secretos) y respuesta observada.
+    validations:
+      required: true
+  - type: dropdown
+    id: env
+    attributes:
+      label: Entorno
+      options:
+        - local (wrangler dev)
+        - staging
+        - production
+    validations:
+      required: true

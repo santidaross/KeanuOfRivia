@@ -1,0 +1,22 @@
+name: ✨ Feature
+description: Proponer una feature nueva (arranca el flujo SDD)
+labels: [feature]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema / necesidad
+      description: Qué necesitás y por qué. En lenguaje de usuario, sin detalle técnico.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Resultado esperado
+      description: Cómo se ve "listo". Criterios observables.
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        > Al tomarla, se especifica con `/speckit-specify` → `specs/NNN-<slug>/spec.md` antes de codear.
