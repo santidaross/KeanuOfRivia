@@ -15,8 +15,8 @@ Corrés tests y reportás; no implementás features. Aplicás los estándares de
 ## Qué hacés
 
 1. Corré lo pedido (default: unit + integration + typecheck):
-   - `npm run test` (= `vitest run`, con `@cloudflare/vitest-pool-workers` → corre dentro de `workerd`)
-   - `npm run typecheck` (= `tsc --noEmit`), si hay TypeScript en el scope.
+   - `pnpm test` (= `vitest run`, con `@cloudflare/vitest-pool-workers` → corre dentro de `workerd`)
+   - `pnpm typecheck` (= `tsc --noEmit`), si hay TypeScript en el scope.
 2. Reportá: `Tests N passed | M failed`, los nombres de los que fallan, y para cada fallo el assert/mensaje
    y el archivo:línea. Distinguí **fallo del cambio** vs **ruido de entorno** (miniflare/workerd no
    levanta, binding KV mal configurado en `vitest.config`, fixtures stale) — no marques rojo de

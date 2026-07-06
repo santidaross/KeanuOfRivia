@@ -29,29 +29,29 @@ Este proyecto está configurado con **tres entornos** para un flujo de desarroll
 ### Desarrollo Local
 ```bash
 # Iniciar servidor de desarrollo local (http://localhost:8787)
-npm run dev
+pnpm dev
 
 # Probar con la config de staging
-npm run dev:staging
+pnpm dev:staging
 ```
 
 ### Deployment Manual
 ```bash
 # Deploy a staging
-npm run deploy:staging
+pnpm deploy:staging
 wrangler deploy --env staging
 
 # Deploy a production
-npm run deploy:production
+pnpm deploy:production
 wrangler deploy --env production
 ```
 
 ### Monitoreo
 ```bash
 # Ver logs en tiempo real
-npm run tail                    # Local/Default
-npm run tail:staging           # Staging
-npm run tail:production        # Production
+pnpm tail                    # Local/Default
+pnpm tail:staging           # Staging
+pnpm tail:production        # Production
 ```
 
 ## 🔧 **Administración por Entorno**
@@ -88,7 +88,7 @@ node admin-config.js status
 ```bash
 git checkout -b feature/nueva-funcionalidad
 # Desarrollo local en http://localhost:8787
-npm run dev
+pnpm dev
 ```
 
 ### 2. **Testing en Staging**

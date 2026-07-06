@@ -1,0 +1,20 @@
+# Configuración de pnpm (settings a nivel repo). Aunque no es un monorepo, pnpm 10 lee
+# sus settings de seguridad desde acá.
+
+# --- Supply-chain hardening ---
+
+# Cooldown: NO instalar una versión publicada hace menos de N minutos. Defensa contra
+# releases comprometidos recién publicados (el clásico ataque de "publican una versión
+# maliciosa y la instalás antes de que alguien la reporte"). 1440 = 24 h.
+minimumReleaseAge: 1440
+
+# pnpm 10 NO ejecuta scripts de lifecycle (postinstall, etc.) de las dependencias por
+# defecto — mitiga malware que corre en el install. Solo se permiten los de acá (los
+# binarios que wrangler realmente necesita compilar/enlazar).
+onlyBuiltDependencies:
+  - esbuild
+  - workerd
+  - "@cloudflare/workerd-linux-64"
+  - "@cloudflare/workerd-windows-64"
+  - "@cloudflare/workerd-darwin-64"
+  - "@cloudflare/workerd-darwin-arm64"

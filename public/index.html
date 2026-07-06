@@ -139,7 +139,20 @@
         updateLinks();
       }
 
-      // Función para actualizar enlaces
+      // Solo permitir abrir URLs http/https (evita esquemas peligrosos como javascript:).
+      function safeHref(u) {
+        try {
+          const parsed = new URL(u, window.location.origin);
+          return (parsed.protocol === 'https:' || parsed.protocol === 'http:') ? parsed.href : null;
+        } catch {
+          return null;
+        }
+      }
+
+      // Función para actualizar enlaces.
+      // SEGURIDAD: el config viene de una API editable (admin). Se construye el DOM con
+      // createElement + textContent + setAttribute (NUNCA innerHTML con datos del config) para
+      // que name/icon no puedan inyectar HTML/scripts (XSS almacenado).
       function updateLinks() {
         if (!siteConfig?.links) return;
 
@@ -147,29 +160,42 @@
         if (!buttonStack) return;
 
         // Limpiar enlaces existentes
-        buttonStack.innerHTML = '';
+        buttonStack.textContent = '';
 
-        // Crear nuevos enlaces
         siteConfig.links.forEach(link => {
           const button = document.createElement('button');
           button.className = `button button-${link.type}`;
-          button.onclick = () => window.open(link.url, '_blank');
           button.type = 'button';
-          
+
+          const href = safeHref(link.url);
+          if (href) button.onclick = () => window.open(href, '_blank', 'noopener');
+
+          const img = document.createElement('img');
+          img.className = 'icon';
+          img.setAttribute('aria-hidden', 'true');
+          if (typeof link.icon === 'string') img.setAttribute('src', link.icon);
+          img.alt = `${link.name ?? ''} Logo`;
+
           if (link.type === 'minecraft') {
             button.style = 'flex-direction: column; align-items: center;';
             button.id = 'mc-status';
-            
-            button.innerHTML = `
-              <div style="display: flex; align-items: center; justify-content: center; width: 100%;">
-                <img class="icon" aria-hidden="true" src="${link.icon}" alt="${link.name} Logo">${link.name}
-              </div>
-              <small style="font-size: 0.8em; opacity: 0.8; margin-top: 0.25rem; text-align: center;">Retrieving status...</small>
-            `;
+
+            const row = document.createElement('div');
+            row.style = 'display: flex; align-items: center; justify-content: center; width: 100%;';
+            row.appendChild(img);
+            row.appendChild(document.createTextNode(link.name ?? ''));
+
+            const small = document.createElement('small');
+            small.style = 'font-size: 0.8em; opacity: 0.8; margin-top: 0.25rem; text-align: center;';
+            small.textContent = 'Retrieving status...';
+
+            button.appendChild(row);
+            button.appendChild(small);
           } else {
-            button.innerHTML = `<img class="icon" aria-hidden="true" src="${link.icon}" alt="${link.name} Logo">${link.name}`;
+            button.appendChild(img);
+            button.appendChild(document.createTextNode(link.name ?? ''));
           }
-          
+
           buttonStack.appendChild(button);
         });
       }

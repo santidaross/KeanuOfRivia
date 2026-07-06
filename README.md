@@ -25,10 +25,10 @@ Cualquier otra ruta sirve el sitio estático desde `public/`.
 ## Desarrollo local
 
 ```bash
-npm install                      # deps + git hooks (lefthook)
+pnpm install                      # deps + git hooks (lefthook)
 cp .dev.vars.example .dev.vars   # y poné una key de dev en ADMIN_API_KEY (NO se commitea)
-npm run dev                      # wrangler dev → http://localhost:8787
-npm run test                     # vitest en el pool de Workers
+pnpm dev                      # wrangler dev → http://localhost:8787
+pnpm test                     # vitest en el pool de Workers
 ```
 
 No hace falta Docker: los Workers corren local nativamente con `wrangler dev` (`workerd`).
@@ -36,8 +36,8 @@ No hace falta Docker: los Workers corren local nativamente con `wrangler dev` (`
 ## Deploy
 
 ```bash
-npm run deploy:staging     # wrangler deploy --env staging
-npm run deploy:production  # wrangler deploy --env production
+pnpm deploy:staging     # wrangler deploy --env staging
+pnpm deploy:production  # wrangler deploy --env production
 ```
 
 ## Secretos (importante)

@@ -1,5 +1,5 @@
 # Git hooks del repo, gestionados por lefthook.
-# Se instalan solos al correr `npm install` (script "prepare" → `lefthook install`).
+# Se instalan solos al correr `pnpm install` (script "prepare" → `lefthook install`).
 # Emergencia (evitar — CI igual valida): git commit --no-verify
 #
 # Decisiones:

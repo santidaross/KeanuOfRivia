@@ -23,7 +23,7 @@ llamadas de red reales en tests.
 ## Setup (una vez)
 
 ```bash
-npm i -D vitest @cloudflare/vitest-pool-workers
+pnpm add -D vitest @cloudflare/vitest-pool-workers
 ```
 
 `vitest.config.ts` (lee los bindings del `wrangler.toml`, así el KV `CACHE` existe en el test):
@@ -49,9 +49,9 @@ export default defineWorkersConfig({
 ## Cómo correr
 
 ```bash
-npm run test                       # toda la suite (vitest run en el pool de Workers)
-npm run test -- test/mc-status.test.ts   # un archivo
-npm run typecheck                  # tsc --noEmit (gate, debe dar 0) — si hay TS
+pnpm test                       # toda la suite (vitest run en el pool de Workers)
+pnpm test -- test/mc-status.test.ts   # un archivo
+pnpm typecheck                  # tsc --noEmit (gate, debe dar 0) — si hay TS
 ```
 
 > Si el pool no arranca (miniflare/workerd no levanta, binding mal configurado) es **ruido de

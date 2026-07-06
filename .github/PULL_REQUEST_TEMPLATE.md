@@ -5,7 +5,7 @@
 
 ## Checklist
 - [ ] Sigue la spec (`specs/NNN-…`) si es una feature
-- [ ] Tests en verde (`npm run test`) y typecheck (`npm run typecheck`)
+- [ ] Tests en verde (`pnpm test`)
 - [ ] Sin secretos en el diff (la key va por `wrangler secret`, no en el repo)
 - [ ] Security headers presentes en respuestas nuevas/modificadas
 - [ ] Docs actualizadas si cambió comportamiento o config (DOCS-SYNC)

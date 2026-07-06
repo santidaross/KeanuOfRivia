@@ -18,7 +18,7 @@ vive en **Cloudflare KV**.
   de `public/` vía el binding `env.ASSETS` (`[assets]` en `wrangler.toml`). JS puro, sin build.
 - **Almacenamiento**: Cloudflare KV (binding `CACHE`) — config del sitio, estado de Minecraft y
   rate-limiting, con TTL.
-- **Tooling**: `wrangler` (dev, deploy, secrets, tail), npm.
+- **Tooling**: `wrangler` (dev, deploy, secrets, tail) + **pnpm** (con hardening supply-chain — ver `pnpm-workspace.yaml` y `.npmrc`).
 - **Testing**: Vitest + `@cloudflare/vitest-pool-workers` (corre dentro de `workerd`).
 - **Deploy**: `wrangler deploy` con entornos `staging` y `production`.
 
@@ -176,12 +176,12 @@ local      → wrangler dev                        (workerd local, http://localh
 ## Desarrollo local
 
 ```bash
-npm install                 # instala deps + lefthook (git hooks) via "prepare"
+pnpm install                 # instala deps + lefthook (git hooks) via "prepare"
 # Crear .dev.vars con los secretos locales (NO commitear):
 #   ADMIN_API_KEY=una-key-de-desarrollo
-npm run dev                 # wrangler dev → http://localhost:8787 (workerd + assets de public/ + KV local)
-npm run test                # vitest en el pool de Workers
-npm run deploy:staging      # deploy a staging
+pnpm dev                 # wrangler dev → http://localhost:8787 (workerd + assets de public/ + KV local)
+pnpm test                # vitest en el pool de Workers
+pnpm deploy:staging      # deploy a staging
 ```
 
 > **No hace falta Docker**: los Workers corren local nativamente con `wrangler dev` (`workerd`). El KV

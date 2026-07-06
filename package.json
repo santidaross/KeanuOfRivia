@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Sitio web personal de Keanu Of Rivia sobre Cloudflare Workers",
   "main": "src/index.js",
+  "packageManager": "pnpm@10.20.0",
   "scripts": {
     "dev": "wrangler dev",
     "dev:staging": "wrangler dev --env staging",
@@ -14,6 +15,7 @@
     "tail:production": "wrangler tail --env production",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
+    "audit": "pnpm audit --prod",
     "admin:get": "node admin-config.js get",
     "admin:update": "node admin-config.js update",
     "admin:delete": "node admin-config.js delete",
@@ -29,6 +31,7 @@
     "wrangler": "^4.27.0"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20",
+    "pnpm": ">=10"
   }
 }
