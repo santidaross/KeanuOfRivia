@@ -13,7 +13,8 @@ export default {
       'X-XSS-Protection': '0',
       'Referrer-Policy': 'strict-origin-when-cross-origin',
       'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
-      'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.mcstatus.io;",
+      // CSP endurecida: sin 'unsafe-inline' (el JS y el CSS son externos, self-hosted).
+      'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.mcstatus.io; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
       'Strict-Transport-Security': 'max-age=31536000; includeSubDomains'
     };
 
@@ -94,33 +95,34 @@ async function handleAPI(request, env, ctx) {
   return new Response('Not Found', { status: 404 });
 }
 
+// IP del cliente. En Cloudflare `cf-connecting-ip` es autoritativa (la setea el edge, no se puede
+// spoofear); NO usamos x-forwarded-for (falsificable). 'unknown' solo aplica en dev local.
+function clientIp(request) {
+  return request.headers.get('cf-connecting-ip') || 'unknown';
+}
+
+// Rate limit por IP con KV (best-effort — KV no es atómico, tolerable para este uso).
+// Devuelve { allowed, remaining }.
+async function rateLimit(env, bucket, ip, limit, windowSec) {
+  const key = `rl:${bucket}:${ip}`;
+  const current = parseInt((await env.CACHE.get(key)) || '0', 10);
+  if (current >= limit) return { allowed: false, remaining: 0 };
+  await env.CACHE.put(key, String(current + 1), { expirationTtl: windowSec });
+  return { allowed: true, remaining: Math.max(0, limit - current - 1) };
+}
+
 async function handleMinecraftStatus(request, env, ctx) {
   const cacheKey = 'minecraft-status';
-  
-  // Rate limiting básico usando IP del cliente
-  const clientIP = request.headers.get('cf-connecting-ip') || 
-                   request.headers.get('x-forwarded-for') || 
-                   'unknown';
-  
-  const rateLimitKey = `rate-limit:${clientIP}`;
-  const rateLimitCount = await env.CACHE.get(rateLimitKey);
-  
-  if (rateLimitCount && parseInt(rateLimitCount) > 10) {
-    return new Response(JSON.stringify({ 
-      online: false, 
-      error: 'Rate limit exceeded' 
-    }), {
+
+  // Rate limiting por IP (20 req/min). cf-connecting-ip solo (no spoofeable en CF).
+  const rl = await rateLimit(env, 'mc', clientIp(request), 20, 60);
+  if (!rl.allowed) {
+    return new Response(JSON.stringify({ online: false, error: 'Rate limit exceeded' }), {
       status: 429,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Retry-After': '60'
-      }
+      headers: { 'Content-Type': 'application/json', 'Retry-After': '60' }
     });
   }
-  
-  // Incrementar contador de rate limit
-  await env.CACHE.put(rateLimitKey, (parseInt(rateLimitCount || '0') + 1).toString(), { expirationTtl: 60 });
-  
+
   // Intentar obtener del cache
   const cached = await env.CACHE.get(cacheKey);
   if (cached) {
@@ -128,7 +130,7 @@ async function handleMinecraftStatus(request, env, ctx) {
       headers: {
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=60',
-        'X-RateLimit-Remaining': Math.max(0, 10 - parseInt(rateLimitCount || '0')).toString()
+        'X-RateLimit-Remaining': String(rl.remaining)
       }
     });
   }
@@ -174,7 +176,7 @@ async function handleMinecraftStatus(request, env, ctx) {
       headers: {
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=60',
-        'X-RateLimit-Remaining': Math.max(0, 10 - parseInt(rateLimitCount || '0')).toString()
+        'X-RateLimit-Remaining': String(rl.remaining)
       }
     });
   } catch (error) {
@@ -246,7 +248,7 @@ async function handleSiteConfig(request, env, ctx) {
     // Si no hay datos en KV, usar configuración por defecto
     const defaultConfig = {
       title: 'Keanu Of Rivia',
-      description: 'Keanu Of Rivia website',
+      description: 'Mi server, mis juegos y cómo encontrarme.',
       links: [
         {
           name: 'Minecraft Server',
@@ -288,7 +290,7 @@ async function handleSiteConfig(request, env, ctx) {
     // Fallback a configuración mínima en caso de error
     const fallbackConfig = {
       title: 'Keanu Of Rivia',
-      description: 'Keanu Of Rivia website',
+      description: 'Mi server, mis juegos y cómo encontrarme.',
       links: [],
       theme: {
         default: 'auto',
@@ -370,6 +372,13 @@ function adminJson(body, status = 200, extraHeaders = {}) {
 }
 
 async function handleAdminConfig(request, env, ctx) {
+  // Rate limiting por IP: frena fuerza bruta de la key (30 req/min por IP). Se aplica ANTES de la
+  // verificación para acotar también los intentos no autenticados.
+  const rl = await rateLimit(env, 'admin', clientIp(request), 30, 60);
+  if (!rl.allowed) {
+    return adminJson({ error: 'Rate limit exceeded' }, 429, { 'Retry-After': '60' });
+  }
+
   // Verificar autenticación (comparación en tiempo constante; fail-closed si la key no está seteada).
   const authHeader = request.headers.get('Authorization') || '';
   const apiKey = env.ADMIN_API_KEY;

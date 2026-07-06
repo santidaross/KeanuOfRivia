@@ -1,0 +1,25 @@
+# Security headers para los ASSETS estáticos (Cloudflare Workers Assets los sirve sin pasar por el
+# Worker, así que no heredan los headers de src/index.js). Deben quedar en sync con securityHeaders.
+# Las respuestas de /api/* las setea el Worker.
+
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.mcstatus.io; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  X-XSS-Protection: 0
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+# Fuentes: el nombre de archivo está versionado (open-sans-v34-…) → seguro cachear inmutable.
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# css/js/imágenes NO tienen hash de contenido, así que cache corto para que los updates se propaguen
+# (con hash de contenido se podría subir a max-age largo + immutable).
+/css/*
+  Cache-Control: public, max-age=600, must-revalidate
+/js/*
+  Cache-Control: public, max-age=600, must-revalidate
+/images/*
+  Cache-Control: public, max-age=3600
