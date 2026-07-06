@@ -51,3 +51,6 @@ next-env.d.ts
 public/videos/*
 !public/videos/loop.webm
 !public/videos/loop.mp4
+
+# fuentes de video locales (no servidas, no commitear)
+media-src/

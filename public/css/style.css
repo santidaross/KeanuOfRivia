@@ -104,6 +104,7 @@ h1 {
   line-height: 1.05;
   letter-spacing: -0.03em;
   text-wrap: balance;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 h1 > div { display: inline; }
 
@@ -230,13 +231,14 @@ footer {
   gap: 0.55rem;
   width: 100%;
   max-width: var(--maxw);
-  padding: var(--space-3) var(--space-4) var(--space-5);
+  padding: var(--space-3) var(--space-4) max(var(--space-5), calc(env(safe-area-inset-bottom) + var(--space-3)));
   color: var(--ink-muted);
   font-size: var(--scale-0);
   text-align: center;
 }
 footer p { margin: 0; }
 footer a { color: var(--ink-muted); text-underline-offset: 2px; }
+body.video-playing footer { text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6); }
 
 /* Fondo de video — modo cinematográfico "Drenched"
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -248,7 +250,10 @@ footer a { color: var(--ink-muted); text-underline-offset: 2px; }
 .scrim {
   position: fixed; inset: 0; z-index: -1; pointer-events: none;
   opacity: 0; transition: opacity 2s ease;
-  background: linear-gradient(180deg, rgba(8, 10, 16, 0.5), rgba(8, 10, 16, 0.66));
+  /* Viñeta (oscurece bordes, deja ver el video al centro) + scrim lineal para legibilidad. */
+  background:
+    radial-gradient(130% 88% at 50% 42%, rgba(8, 10, 16, 0.28) 18%, rgba(4, 6, 11, 0.95) 100%),
+    linear-gradient(180deg, rgba(8, 10, 16, 0.55), rgba(8, 10, 16, 0.8));
 }
 /* Reproduciendo: video + scrim aparecen con fade (~2s). El JS pausa el video recién tras el fade-out. */
 body.video-playing .bg-video,
