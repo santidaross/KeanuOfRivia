@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="theme-auto" lang="es">
+<html lang="es">
 
 <head>
   <meta charset="utf-8">
@@ -27,9 +27,12 @@
 </head>
 
 <body>
-  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Cambiar tema" title="Cambiar tema">
-    <span aria-hidden="true">🌓</span>
-  </button>
+  <!-- Fondo de video (modo cinematográfico). JS controla play/pause segun reduce-motion + preferencia. -->
+  <video class="bg-video" muted loop playsinline preload="metadata">
+    <source src="videos/loop.webm" type="video/webm">
+    <source src="videos/loop.mp4" type="video/mp4">
+  </video>
+  <div class="scrim"></div>
 
   <main class="container">
     <header class="profile">
@@ -49,6 +52,15 @@
   </main>
 
   <footer>
+    <button id="video-toggle" class="video-toggle" type="button" aria-pressed="true"
+            aria-label="Pausar video de fondo" title="Pausar video de fondo">
+      <svg class="icon-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect>
+      </svg>
+      <svg class="icon-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M8 5v14l11-7z"></path>
+      </svg>
+    </button>
     <p>© <span id="year">2026</span> Keanu Of Rivia</p>
   </footer>
 </body>

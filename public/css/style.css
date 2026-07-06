@@ -1,11 +1,11 @@
 /*
  * KeanuOfRivia — hub personal. Diseño crafted sobre la base LittleLink.
- * Tokens en :root, tema por clase (.theme-dark/.theme-light) + prefers-color-scheme (.theme-auto).
+ * Tema ÚNICO oscuro (el fondo es media/video; no hay toggle claro/oscuro).
  * Los colores de marca de los botones viven en brands.css; acá va el chrome/layout.
  */
 
 :root {
-  color-scheme: light dark;
+  color-scheme: dark;
 
   /* Escala tipográfica (1.25 modular) */
   --scale-0: 0.875rem;   /* 14px */
@@ -29,38 +29,17 @@
   --accent: #7c6cf5;     /* violeta signature (matchea el gradiente del avatar) */
   --accent-2: #38bdf8;
 
-  /* Tema claro (default) */
-  --bg: #f5f6f8;
-  --bg-glow: color-mix(in oklab, var(--accent) 22%, transparent);
-  --surface: #ffffff;
-  --surface-2: #eef0f4;
-  --ink: #14171f;        /* texto principal — alto contraste */
-  --ink-muted: #545b6b;  /* texto secundario — ≥4.5:1 sobre --bg */
-  --border: #e2e5ec;
-  --ring: color-mix(in oklab, var(--accent) 60%, transparent);
-  --shadow: 0 1px 2px rgba(16, 20, 30, 0.06), 0 8px 24px -12px rgba(16, 20, 30, 0.18);
-  --shadow-hover: 0 2px 4px rgba(16, 20, 30, 0.08), 0 16px 36px -14px rgba(16, 20, 30, 0.28);
-}
-
-/* Tema oscuro: por clase (.theme-dark) o por preferencia del sistema en modo auto */
-:root.theme-dark {
-  color-scheme: dark;
-  --bg: #0d1017; --bg-glow: color-mix(in oklab, var(--accent) 32%, transparent);
-  --surface: #161b25; --surface-2: #1e2432;
-  --ink: #f4f6fb; --ink-muted: #a3adc0; --border: #262d3b;
+  /* Tema oscuro (ÚNICO — el fondo es media/oscuro siempre; no hay toggle de tema) */
+  --bg: #0d1017;
+  --bg-glow: color-mix(in oklab, var(--accent) 32%, transparent);
+  --surface: #161b25;
+  --surface-2: #1e2432;
+  --ink: #f4f6fb;
+  --ink-muted: #a3adc0;
+  --border: #262d3b;
   --ring: color-mix(in oklab, var(--accent) 70%, transparent);
-  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -12px rgba(0,0,0,.6);
-  --shadow-hover: 0 2px 6px rgba(0,0,0,.5), 0 18px 44px -14px rgba(0,0,0,.7);
-}
-@media (prefers-color-scheme: dark) {
-  :root.theme-auto {
-    --bg: #0d1017; --bg-glow: color-mix(in oklab, var(--accent) 32%, transparent);
-    --surface: #161b25; --surface-2: #1e2432;
-    --ink: #f4f6fb; --ink-muted: #a3adc0; --border: #262d3b;
-    --ring: color-mix(in oklab, var(--accent) 70%, transparent);
-    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -12px rgba(0,0,0,.6);
-    --shadow-hover: 0 2px 6px rgba(0,0,0,.5), 0 18px 44px -14px rgba(0,0,0,.7);
-  }
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px -12px rgba(0, 0, 0, 0.6);
+  --shadow-hover: 0 2px 6px rgba(0, 0, 0, 0.5), 0 18px 44px -14px rgba(0, 0, 0, 0.7);
 }
 
 /* Base
@@ -241,34 +220,14 @@ button.button:focus-visible {
   100% { box-shadow: 0 0 0 0 transparent; }
 }
 
-/* Theme toggle
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-.theme-toggle {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  z-index: 100;
-  width: 2.5rem;
-  height: 2.5rem;
-  display: grid;
-  place-items: center;
-  font-size: 1.05rem;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: color-mix(in oklab, var(--surface) 80%, transparent);
-  backdrop-filter: blur(8px);
-  color: var(--ink);
-  cursor: pointer;
-  box-shadow: var(--shadow);
-  transition: transform 0.18s ease, border-color 0.18s ease;
-}
-.theme-toggle:hover { transform: scale(1.08); border-color: var(--ring); }
-.theme-toggle:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
-
 /* Footer
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 footer {
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
   width: 100%;
   max-width: var(--maxw);
   padding: var(--space-3) var(--space-4) var(--space-5);
@@ -276,7 +235,40 @@ footer {
   font-size: var(--scale-0);
   text-align: center;
 }
+footer p { margin: 0; }
 footer a { color: var(--ink-muted); text-underline-offset: 2px; }
+
+/* Fondo de video — modo cinematográfico "Drenched"
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.bg-video {
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; z-index: -2; pointer-events: none;
+  opacity: 0; transition: opacity 2s ease;
+}
+.scrim {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  opacity: 0; transition: opacity 2s ease;
+  background: linear-gradient(180deg, rgba(8, 10, 16, 0.5), rgba(8, 10, 16, 0.66));
+}
+/* Reproduciendo: video + scrim aparecen con fade (~2s). El JS pausa el video recién tras el fade-out. */
+body.video-playing .bg-video,
+body.video-playing .scrim { opacity: 1; }
+
+/* Botón play/pause del video (en el footer) — minimalista */
+.video-toggle {
+  display: inline-grid; place-items: center;
+  width: 1.75rem; height: 1.75rem; flex-shrink: 0;
+  border-radius: 50%; border: 1px solid var(--border);
+  background: transparent; color: var(--ink-muted); cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.video-toggle:hover { color: var(--ink); border-color: var(--ring); }
+.video-toggle:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+body.video-playing .video-toggle { border-color: rgba(255, 255, 255, 0.25); }
+/* Un solo ícono a la vez: PAUSA cuando reproduce, PLAY cuando está pausado. */
+.video-toggle svg { display: none; }
+body.video-playing .video-toggle .icon-pause { display: block; }
+body:not(.video-playing) .video-toggle .icon-play { display: block; }
 
 /* Motion: entrada escalonada de los botones
 –––––––––––––––––––––––––––––––––––––––––––––––––– */

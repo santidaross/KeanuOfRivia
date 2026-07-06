@@ -16,9 +16,8 @@
     title: 'Keanu Of Rivia',
     description: 'Mi server, mis juegos y cómo encontrarme.',
     links: [
-      { name: 'Minecraft Server', url: 'https://mc.keanuofrivia.com', icon: '/images/icons/minecraft.svg', type: 'minecraft' },
-      { name: 'Steam', url: 'https://steamcommunity.com/profiles/76561197993066934', icon: '/images/icons/steam.svg', type: 'steam' },
-      { name: 'Buy Me A Coffee', url: 'https://buymeacoffee.com/keanuofrivia', icon: '/images/icons/buy-me-a-coffee.svg', type: 'coffee' }
+      // Por ahora solo Steam (Minecraft y Coffee re-activables por API o acá).
+      { name: 'Steam', url: 'https://steamcommunity.com/profiles/76561197993066934', icon: '/images/icons/steam.svg', type: 'steam' }
     ]
   };
 
@@ -151,34 +150,46 @@
     }
   }
 
-  // --- Theme toggle (auto → dark → light) ---
-  const THEMES = ['theme-auto', 'theme-dark', 'theme-light'];
-  const THEME_ICON = { 'theme-auto': '🌓', 'theme-dark': '☀️', 'theme-light': '🌙' };
-  const THEME_LABEL = { 'theme-auto': 'Tema: automático', 'theme-dark': 'Tema: oscuro', 'theme-light': 'Tema: claro' };
+  // Control del video de fondo: play/pause manual, con default segun la preferencia de
+  // movimiento reducido del usuario, y recordado en localStorage.
+  // - Sin preferencia guardada: arranca PAUSADO si el usuario pidio reduce-motion, si no reproduce.
+  // - El boton del footer togglea y guarda la eleccion (que gana sobre el default).
+  // - Transicion de ~2s (fade). Al pausar, se deja correr el fade-out y recien se pausa (corta el decode).
+  function initVideo() {
+    const video = document.querySelector('.bg-video');
+    const btn = document.getElementById('video-toggle');
+    if (!video) return;
 
-  function applyTheme(theme, toggle) {
-    document.documentElement.className = theme;
-    if (toggle) {
-      const span = toggle.querySelector('span');
-      if (span) span.textContent = THEME_ICON[theme] ?? '🌓';
-      toggle.setAttribute('aria-label', THEME_LABEL[theme] ?? 'Cambiar tema');
-      toggle.setAttribute('title', THEME_LABEL[theme] ?? 'Cambiar tema');
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const saved = localStorage.getItem('video-playback'); // 'play' | 'pause' | null
+    let playing = saved === 'play' ? true : saved === 'pause' ? false : !reduce;
+    let fadeTimer = null;
+
+    function apply(p) {
+      playing = p;
+      document.body.classList.toggle('video-playing', p);
+      if (fadeTimer) { clearTimeout(fadeTimer); fadeTimer = null; }
+      if (p) {
+        video.play().catch(() => { /* autoplay bloqueado: queda el fondo sin video */ });
+      } else {
+        // dejar correr el fade-out (~2s) y recien pausar → corta el decode/CPU sin cortar la transicion
+        fadeTimer = setTimeout(() => { try { video.pause(); } catch (e) { /* noop */ } }, 2000);
+      }
+      // La visibilidad del ícono la maneja el CSS via body.video-playing (SVG no refleja .hidden).
+      if (btn) {
+        btn.setAttribute('aria-pressed', String(p));
+        const label = p ? 'Pausar video de fondo' : 'Reproducir video de fondo';
+        btn.setAttribute('aria-label', label);
+        btn.setAttribute('title', label);
+      }
     }
-  }
 
-  function initThemeToggle() {
-    const toggle = document.getElementById('theme-toggle');
-    let saved = localStorage.getItem('theme');
-    if (!THEMES.includes(saved)) saved = 'theme-auto';
-    applyTheme(saved, toggle);
+    apply(playing);
 
-    if (toggle) {
-      toggle.addEventListener('click', () => {
-        const current = THEMES.includes(document.documentElement.className)
-          ? document.documentElement.className : 'theme-auto';
-        const next = THEMES[(THEMES.indexOf(current) + 1) % THEMES.length];
-        localStorage.setItem('theme', next);
-        applyTheme(next, toggle);
+    if (btn) {
+      btn.addEventListener('click', () => {
+        localStorage.setItem('video-playback', !playing ? 'play' : 'pause');
+        apply(!playing);
       });
     }
   }
@@ -187,7 +198,7 @@
   document.addEventListener('DOMContentLoaded', async () => {
     const yearEl = document.getElementById('year');
     if (yearEl) yearEl.textContent = String(new Date().getFullYear());
-    initThemeToggle();
+    initVideo();
     await loadSiteConfig();
     checkMinecraftStatus();
     setInterval(checkMinecraftStatus, 120000);

@@ -250,18 +250,8 @@ async function handleSiteConfig(request, env, ctx) {
       title: 'Keanu Of Rivia',
       description: 'Mi server, mis juegos y cómo encontrarme.',
       links: [
-        {
-          name: 'Minecraft Server',
-          url: 'https://mc.keanuofrivia.com',
-          icon: '/images/icons/minecraft.svg',
-          type: 'minecraft'
-        },
-        {
-          name: 'Buy Me A Coffee',
-          url: 'https://buymeacoffee.com/keanuofrivia',
-          icon: '/images/icons/buy-me-a-coffee.svg',
-          type: 'coffee'
-        },
+        // Por ahora solo Steam. Minecraft y Buy Me A Coffee se pueden re-activar por API
+        // (POST /api/admin/config) o descomentando acá.
         {
           name: 'Steam',
           url: 'https://steamcommunity.com/profiles/76561197993066934',

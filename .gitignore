@@ -46,3 +46,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Videos: ignorar los pesados/preview (original 20MB, picker), commitear solo los loops comprimidos.
+public/videos/*
+!public/videos/loop.webm
+!public/videos/loop.mp4
