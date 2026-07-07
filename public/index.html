@@ -27,7 +27,9 @@
 </head>
 
 <body>
-  <!-- Fondo: un frame random (poster) siempre detrás; el video se superpone al reproducir. -->
+  <!-- Fondo: frames (poster) con crossfade en pausa; el video se superpone al reproducir.
+       Dos capas para el crossfade (JS alterna la activa). -->
+  <div class="bg-poster" aria-hidden="true"></div>
   <div class="bg-poster" aria-hidden="true"></div>
   <!-- Fondo de video (modo cinematográfico). JS controla play/pause segun reduce-motion + preferencia. -->
   <video class="bg-video" muted loop playsinline preload="metadata">
@@ -54,16 +56,27 @@
   </main>
 
   <footer>
-    <button id="video-toggle" class="video-toggle" type="button" aria-pressed="true"
-            aria-label="Pausar video de fondo" title="Pausar video de fondo">
-      <svg class="icon-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect>
+    <div class="footer-row">
+      <button id="video-toggle" class="video-toggle" type="button" aria-pressed="true"
+              aria-label="Pausar video de fondo" title="Pausar video de fondo">
+        <svg class="icon-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect>
+        </svg>
+        <svg class="icon-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M8 5v14l11-7z"></path>
+        </svg>
+      </button>
+      <p>© <span id="year">2026</span> Keanu Of Rivia</p>
+    </div>
+    <a class="footer-credit" href="https://www.youtube.com/watch?v=bS5P_LAqiVg"
+       target="_blank" rel="noopener noreferrer">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
       </svg>
-      <svg class="icon-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M8 5v14l11-7z"></path>
-      </svg>
-    </button>
-    <p>© <span id="year">2026</span> Keanu Of Rivia</p>
+      <span>Fondo: «Kung Fury» (Hackerman)</span>
+    </a>
   </footer>
 </body>
 

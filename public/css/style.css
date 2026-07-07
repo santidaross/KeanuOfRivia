@@ -226,27 +226,44 @@ button.button:focus-visible {
 footer {
   flex-shrink: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 0.55rem;
+  gap: 0.4rem;
   width: 100%;
   max-width: var(--maxw);
   padding: var(--space-3) var(--space-4) max(var(--space-5), calc(env(safe-area-inset-bottom) + var(--space-3)));
   color: var(--ink-muted);
   font-size: var(--scale-0);
   text-align: center;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
 }
+.footer-row { display: flex; align-items: center; justify-content: center; gap: 0.55rem; }
 footer p { margin: 0; }
-footer a { color: var(--ink-muted); text-underline-offset: 2px; }
-body.video-playing footer { text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6); }
+
+/* Link al corto "Kung Fury" (fondo) */
+.footer-credit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--ink-muted);
+  text-decoration: none;
+  opacity: 0.85;
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+.footer-credit svg { flex-shrink: 0; }
+.footer-credit:hover { color: var(--ink); opacity: 1; }
+.footer-credit:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; border-radius: 4px; }
 
 /* Fondo de video — modo cinematográfico "Drenched"
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
-/* Poster: un frame random del video, SIEMPRE detrás. Se ve cuando el video está pausado. */
+/* Poster: frames del video detrás. Dos capas que hacen crossfade en pausa (JS alterna .is-active).
+   Se ven cuando el video está pausado. */
 .bg-poster {
   position: fixed; inset: 0; z-index: -3; pointer-events: none;
-  background: #0d1017 center / cover no-repeat;
+  background: center / cover no-repeat;
+  opacity: 0; transition: opacity 1.6s ease;
 }
+.bg-poster.is-active { opacity: 1; }
 .bg-video {
   position: fixed; inset: 0; width: 100%; height: 100%;
   object-fit: cover; z-index: -2; pointer-events: none;

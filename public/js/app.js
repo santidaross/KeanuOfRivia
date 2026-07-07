@@ -156,11 +156,50 @@
     'f-0028', 'f-0052', 'f-0084', 'f-0107', 'f-0150', 'f-0374', 'f-0575',
     'f-0698', 'f-0804', 'f-1005', 'f-1143', 'f-1855', 'f-1870'
   ];
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
   function initPoster() {
-    const el = document.querySelector('.bg-poster');
-    if (!el) return;
-    const pick = POSTER_FRAMES[Math.floor(Math.random() * POSTER_FRAMES.length)];
-    el.style.backgroundImage = `url("/images/frames/${pick}.jpg")`;
+    const layers = Array.from(document.querySelectorAll('.bg-poster'));
+    if (layers.length === 0) return;
+
+    const url = (n) => `url("/images/frames/${n}.jpg")`;
+    const preload = (n) => { const i = new Image(); i.src = `/images/frames/${n}.jpg`; };
+    let order = shuffle(POSTER_FRAMES.slice());
+    let idx = 0;
+    let active = 0;
+
+    // Primer frame inmediato (sin crossfade).
+    layers[0].style.backgroundImage = url(order[0]);
+    layers[0].classList.add('is-active');
+
+    // Reduce-motion o una sola capa: sin slideshow, queda el frame fijo.
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || layers.length < 2) return;
+
+    preload(order[1]);
+
+    function crossfadeTo(n) {
+      const next = layers[1 - active];
+      next.style.backgroundImage = url(n);
+      next.classList.add('is-active');
+      layers[active].classList.remove('is-active');
+      active = 1 - active;
+    }
+
+    // Solo avanza cuando el video está PAUSADO (en reproducción el video tapa el poster).
+    setInterval(() => {
+      if (document.body.classList.contains('video-playing')) return;
+      idx = (idx + 1) % order.length;
+      if (idx === 0) order = shuffle(order);
+      crossfadeTo(order[idx]);
+      preload(order[(idx + 1) % order.length]);
+    }, 5500);
   }
 
   // Control del video de fondo: play/pause manual, con default segun la preferencia de
