@@ -231,7 +231,7 @@ footer {
   gap: 0.4rem;
   width: 100%;
   max-width: var(--maxw);
-  padding: var(--space-3) var(--space-4) max(var(--space-5), calc(env(safe-area-inset-bottom) + var(--space-3)));
+  padding: var(--space-3) var(--space-4) max(var(--space-2), calc(env(safe-area-inset-bottom) + var(--space-1)));
   color: var(--ink-muted);
   font-size: var(--scale-0);
   text-align: center;
