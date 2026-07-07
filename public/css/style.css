@@ -89,9 +89,9 @@ body {
   padding: 3px;
   background:
     linear-gradient(var(--surface), var(--surface)) padding-box,
-    linear-gradient(135deg, var(--accent), var(--accent-2)) border-box;
+    linear-gradient(#2a475e, #2a475e) border-box;   /* anillo liso, mismo navy que Steam */
   border: 3px solid transparent;
-  box-shadow: 0 0 0 6px color-mix(in oklab, var(--accent) 12%, transparent), var(--shadow);
+  box-shadow: 0 0 0 6px rgba(42, 71, 94, 0.3), var(--shadow);
 }
 .avatar--soft { border-radius: 50%; } /* compat: la clase existente ahora es circular */
 
@@ -150,15 +150,16 @@ button.button {
   background-color: var(--button-background, var(--surface));
   color: var(--button-text, var(--ink));
   cursor: pointer;
-  box-shadow: var(--shadow);
+  /* Highlight superior + sombra inferior interna → sensación premium/con volumen. */
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 -1px 0 rgba(0, 0, 0, 0.14);
   transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1),
               box-shadow 0.18s ease, filter 0.18s ease;
 }
 .button:hover,
 button.button:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
-  filter: brightness(1.03) saturate(1.03);
+  box-shadow: var(--shadow-hover), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  filter: brightness(1.06);
 }
 .button:active,
 button.button:active { transform: translateY(0); }
@@ -167,6 +168,20 @@ button.button:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 3px;
 }
+
+/* Refinamiento de marca (override sobre brands.css)
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+/* Steam: su NAVY real (no el celeste brillante), con acento steam-blue. */
+.button-steam {
+  --button-text: #ffffff;
+  background: #2a475e;                 /* navy liso (el tono superior) */
+  border: 1px solid rgba(102, 192, 244, 0.32);
+}
+.button-steam:hover {
+  box-shadow: var(--shadow-hover), inset 0 1px 0 rgba(255, 255, 255, 0.2),
+              0 0 26px -8px rgba(102, 192, 244, 0.55);
+}
+.button-steam .icon { filter: drop-shadow(0 0 6px rgba(102, 192, 244, 0.4)); }
 
 /* Icono dentro del botón */
 .button .icon {
@@ -237,8 +252,90 @@ footer {
   text-align: center;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
 }
-.footer-row { display: flex; align-items: center; justify-content: center; gap: 0.55rem; }
 footer p { margin: 0; }
+
+/* Controles del video flotantes en la esquina inferior derecha */
+.media-controls {
+  position: fixed;
+  z-index: 100;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, calc(env(safe-area-inset-bottom) + 0.4rem));
+  display: flex;
+  gap: 0.4rem;
+}
+.media-controls .video-toggle {
+  width: 2.25rem;
+  height: 2.25rem;
+  background: rgba(10, 13, 20, 0.5);
+  backdrop-filter: blur(8px);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: var(--ink);
+}
+.media-controls .video-toggle:hover { background: rgba(22, 27, 37, 0.75); border-color: var(--ring); }
+
+/* Barra de volumen VERTICAL: cápsula redondeada (mismo borde/estilo que el botón circular),
+   arriba del botón de sonido, visible SOLO en hover + modo sonido. */
+.volume-control { position: relative; display: flex; align-items: center; }
+.volume-popup {
+  position: absolute;
+  bottom: calc(100% + 0.4rem);
+  left: 50%;
+  width: 2.25rem;                                 /* mismo ancho que el botón circular */
+  padding: 0.8rem 0;
+  display: flex;
+  justify-content: center;
+  background: rgba(10, 13, 20, 0.5);              /* mismo fondo que los controles */
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.16);   /* mismo borde que el botón */
+  border-radius: 999px;                           /* cápsula redondeada */
+  box-shadow: var(--shadow);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(4px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
+}
+/* Puente invisible que cubre el gap cápsula↔botón para no perder el :hover al subir el mouse. */
+.volume-popup::after {
+  content: "";
+  position: absolute;
+  top: 100%; left: 0; right: 0;
+  height: 0.5rem;
+}
+/* Solo cuando hay sonido (body.audio-on) y hay hover/foco. */
+body.audio-on .volume-control:hover .volume-popup,
+body.audio-on .volume-control:focus-within .volume-popup {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+#volume-slider {
+  -webkit-appearance: slider-vertical;   /* vertical en Chrome/Safari */
+  appearance: slider-vertical;
+  writing-mode: vertical-lr;             /* vertical en Firefox */
+  direction: rtl;                        /* 0 abajo, máx arriba */
+  width: 6px;
+  height: 6rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);  /* riel gris oscuro */
+  cursor: pointer;
+}
+#volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px; height: 13px;
+  border-radius: 50%;
+  background: #c8ced8;                     /* thumb gris neutro (sin celeste) */
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+#volume-slider::-moz-range-thumb {
+  width: 13px; height: 13px;
+  border-radius: 50%;
+  background: #c8ced8;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+}
+#volume-slider:focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; }
 
 /* Link al corto "Kung Fury" (fondo) */
 .footer-credit {
@@ -247,11 +344,16 @@ footer p { margin: 0; }
   gap: 0.35rem;
   color: var(--ink-muted);
   text-decoration: none;
-  opacity: 0.85;
+  opacity: 0.5;                 /* link oscuro/discreto por defecto */
   transition: color 0.15s ease, opacity 0.15s ease;
 }
 .footer-credit svg { flex-shrink: 0; }
-.footer-credit:hover { color: var(--ink); opacity: 1; }
+.footer-credit:hover {          /* hover: se aclara + subrayado (pequeña diferencia) */
+  color: var(--ink);
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .footer-credit:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; border-radius: 4px; }
 
 /* Fondo de video — modo cinematográfico "Drenched"
@@ -295,6 +397,9 @@ body.video-playing .video-toggle { border-color: rgba(255, 255, 255, 0.25); }
 .video-toggle svg { display: none; }
 body.video-playing .video-toggle .icon-pause { display: block; }
 body:not(.video-playing) .video-toggle .icon-play { display: block; }
+/* Sonido: ícono "muted" por defecto, "unmuted" cuando body.audio-on. */
+body:not(.audio-on) .video-toggle .icon-muted { display: block; }
+body.audio-on .video-toggle .icon-unmuted { display: block; }
 
 /* Motion: entrada escalonada de los botones
 –––––––––––––––––––––––––––––––––––––––––––––––––– */

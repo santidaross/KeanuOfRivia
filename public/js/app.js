@@ -247,11 +247,39 @@
   }
 
   // --- Init ---
+  // Sonido del video de fondo: por defecto MUTEADO (requerido para el autoplay). El botón lo togglea
+  // con el gesto del usuario. Es por sesión (no persiste; unmutear sin gesto lo bloquea el navegador).
+  function initMute() {
+    const video = document.querySelector('.bg-video');
+    const btn = document.getElementById('mute-toggle');
+    if (!video || !btn) return;
+
+    function setAudio(on) {
+      video.muted = !on;
+      document.body.classList.toggle('audio-on', on);
+      btn.setAttribute('aria-pressed', String(on));
+      const label = on ? 'Silenciar sonido' : 'Activar sonido';
+      btn.setAttribute('aria-label', label);
+      btn.setAttribute('title', label);
+    }
+
+    setAudio(false); // arranca muteado
+    btn.addEventListener('click', () => setAudio(video.muted));
+
+    // Barra de volumen (controla video.volume; la visibilidad la maneja el CSS).
+    const slider = document.getElementById('volume-slider');
+    if (slider) {
+      video.volume = Number(slider.value) / 100;
+      slider.addEventListener('input', () => { video.volume = Number(slider.value) / 100; });
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', async () => {
     const yearEl = document.getElementById('year');
     if (yearEl) yearEl.textContent = String(new Date().getFullYear());
     initPoster();
     initVideo();
+    initMute();
     await loadSiteConfig();
     checkMinecraftStatus();
     setInterval(checkMinecraftStatus, 120000);

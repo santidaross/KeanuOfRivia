@@ -55,19 +55,40 @@
     </nav>
   </main>
 
-  <footer>
-    <div class="footer-row">
-      <button id="video-toggle" class="video-toggle" type="button" aria-pressed="true"
-              aria-label="Pausar video de fondo" title="Pausar video de fondo">
-        <svg class="icon-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect>
+  <!-- Controles del video flotantes en la esquina inferior derecha. -->
+  <div class="media-controls">
+    <button id="video-toggle" class="video-toggle" type="button" aria-pressed="true"
+            aria-label="Pausar video de fondo" title="Pausar video de fondo">
+      <svg class="icon-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect>
+      </svg>
+      <svg class="icon-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M8 5v14l11-7z"></path>
+      </svg>
+    </button>
+    <div class="volume-control">
+      <div class="volume-popup">
+        <input type="range" id="volume-slider" min="0" max="100" value="100"
+               aria-label="Volumen del video" title="Volumen">
+      </div>
+      <button id="mute-toggle" class="video-toggle" type="button" aria-pressed="false"
+              aria-label="Activar sonido" title="Activar sonido">
+        <svg class="icon-muted" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" stroke="none"></polygon>
+          <line x1="22" y1="9" x2="16" y2="15"></line><line x1="16" y1="9" x2="22" y2="15"></line>
         </svg>
-        <svg class="icon-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M8 5v14l11-7z"></path>
+        <svg class="icon-unmuted" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" stroke="none"></polygon>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
         </svg>
       </button>
-      <p>© <span id="year">2026</span> Keanu Of Rivia</p>
     </div>
+  </div>
+
+  <footer>
+    <p>© <span id="year">2026</span> Keanu Of Rivia</p>
     <a class="footer-credit" href="https://www.youtube.com/watch?v=bS5P_LAqiVg"
        target="_blank" rel="noopener noreferrer">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -75,7 +96,7 @@
         <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
         <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
       </svg>
-      <span>Kung Fury - LaserUnicorns</span>
+      <span>Kung Fury</span>
     </a>
   </footer>
 </body>
