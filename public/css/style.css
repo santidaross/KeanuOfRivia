@@ -242,22 +242,26 @@ body.video-playing footer { text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6); }
 
 /* Fondo de video — modo cinematográfico "Drenched"
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
+/* Poster: un frame random del video, SIEMPRE detrás. Se ve cuando el video está pausado. */
+.bg-poster {
+  position: fixed; inset: 0; z-index: -3; pointer-events: none;
+  background: #0d1017 center / cover no-repeat;
+}
 .bg-video {
   position: fixed; inset: 0; width: 100%; height: 100%;
   object-fit: cover; z-index: -2; pointer-events: none;
   opacity: 0; transition: opacity 2s ease;
 }
+/* Scrim SIEMPRE encima (cubre tanto el poster como el video) para legibilidad.
+   Viñeta (oscurece bordes) + scrim lineal. */
 .scrim {
   position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  opacity: 0; transition: opacity 2s ease;
-  /* Viñeta (oscurece bordes, deja ver el video al centro) + scrim lineal para legibilidad. */
   background:
     radial-gradient(130% 88% at 50% 42%, rgba(8, 10, 16, 0.28) 18%, rgba(4, 6, 11, 0.95) 100%),
     linear-gradient(180deg, rgba(8, 10, 16, 0.55), rgba(8, 10, 16, 0.8));
 }
-/* Reproduciendo: video + scrim aparecen con fade (~2s). El JS pausa el video recién tras el fade-out. */
-body.video-playing .bg-video,
-body.video-playing .scrim { opacity: 1; }
+/* Reproduciendo: el video hace fade-in (~2s) sobre el poster. El JS lo pausa tras el fade-out. */
+body.video-playing .bg-video { opacity: 1; }
 
 /* Botón play/pause del video (en el footer) — minimalista */
 .video-toggle {

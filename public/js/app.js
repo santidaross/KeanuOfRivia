@@ -150,6 +150,19 @@
     }
   }
 
+  // Poster de fondo: elige un frame random del set en cada carga (variedad por visita).
+  // Se ve cuando el video está pausado / mientras carga / con reduce-motion.
+  const POSTER_FRAMES = [
+    'f-0028', 'f-0052', 'f-0084', 'f-0107', 'f-0150', 'f-0374', 'f-0575',
+    'f-0698', 'f-0804', 'f-1005', 'f-1143', 'f-1855', 'f-1870'
+  ];
+  function initPoster() {
+    const el = document.querySelector('.bg-poster');
+    if (!el) return;
+    const pick = POSTER_FRAMES[Math.floor(Math.random() * POSTER_FRAMES.length)];
+    el.style.backgroundImage = `url("/images/frames/${pick}.jpg")`;
+  }
+
   // Control del video de fondo: play/pause manual, con default segun la preferencia de
   // movimiento reducido del usuario, y recordado en localStorage.
   // - Sin preferencia guardada: arranca PAUSADO si el usuario pidio reduce-motion, si no reproduce.
@@ -198,6 +211,7 @@
   document.addEventListener('DOMContentLoaded', async () => {
     const yearEl = document.getElementById('year');
     if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+    initPoster();
     initVideo();
     await loadSiteConfig();
     checkMinecraftStatus();

@@ -27,6 +27,8 @@
 </head>
 
 <body>
+  <!-- Fondo: un frame random (poster) siempre detrás; el video se superpone al reproducir. -->
+  <div class="bg-poster" aria-hidden="true"></div>
   <!-- Fondo de video (modo cinematográfico). JS controla play/pause segun reduce-motion + preferencia. -->
   <video class="bg-video" muted loop playsinline preload="metadata">
     <source src="videos/loop.webm" type="video/webm">
